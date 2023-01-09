@@ -19,11 +19,15 @@ Plug 'Wospx-Qz/vim-snippets'
 "Plug 'nvim-lua/plenary.nvim'
 "Plug 'nvim-telescope/telescope.nvim'
 Plug 'easymotion/vim-easymotion'
+Plug 'neoclide/coc.nvim'
+"Plug 'jpalardy/vim-slime'
+"Plug 'sillybun/vim-repl'
+"Plug 'hkupty/iron.nvim'
 
 call plug#end()
 
 "{{{config
-:colorscheme one "molokai
+:colorscheme gruvbox "one molokai
 set clipboard^=unnamed,unnamedplus
 set tabstop=4 
 set shiftwidth=4
@@ -31,6 +35,7 @@ set autoindent
 set number
 set showmatch
 set relativenumber
+set background=dark
 "保存折叠信息
 autocmd BufWinLeave *.m mkview
 autocmd BufWinLeave *.md mkview
@@ -140,9 +145,10 @@ let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 "}}}
 
 "{{{python
-map <F5> :w<cr>:!python %<cr>
-nnoremap <F6> :w<cr>:term python %<cr>
+"map <F5> :w<cr>:!python %<cr>
+nnoremap <F5> :w<cr>:sp<cr><c-w><c-w>:term python %<cr>
 nnoremap <F7> :w<cr>:term python<cr>
+"noremap ,l :sp<CR><C-w>j:term ipython<CR> i %run 
 "}}}
 
 "easymotion
@@ -154,14 +160,17 @@ let g:EasyMotion_do_mapping = 0 " Disable default mappings
 " or
 " `s{char}{char}{label}`
 " Need one more keystroke, but on average, it may be more comfortable.
-nmap f <Plug>(easymotion-overwin-f)
+nmap <Leader>f <Plug>(easymotion-overwin-f)
 
 " Turn on case-insensitive feature
-let g:EasyMotion_smartcase = 1
+let g:EasyMotion_smartcase = 2
 
 " JK motions: Line motions
 map <Leader>j <Plug>(easymotion-j)
 map <Leader>k <Plug>(easymotion-k)
+
+	
+
 
 "{{{mapping
 inoremap jj <ESC>
@@ -169,3 +178,8 @@ nnoremap <ESC><ESC> :nohl<cr>
 nnoremap <F2> :Startify<cr> 
 nnoremap <Leader>t :NERDTreeFind<cr>
 "}}}
+"
+
+" self Setting
+nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr><c-w><c-w>
+nnoremap <Leader><Leader> :b ipython <cr> a <c-v><cr><c-\><c-n>:bn<cr>
