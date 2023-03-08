@@ -5,11 +5,11 @@ Plug 'jistr/vim-nerdtree-tabs'
 Plug 'ZSaberLv0/ZFVimIM'
 Plug 'ZSaberLv0/ZFVimJob'
 Plug 'ZSaberLv0/ZFVimIM_openapi'
-Plug 'godlygeek/tabular' "必要插件，安装在vim-markdown前面
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-Plug 'plasticboy/vim-markdown'
-Plug 'ferrine/md-img-paste.vim' 
-Plug 'yinflying/matlab.vim'
+"Plug 'godlygeek/tabular' "必要插件，安装在vim-markdown前面
+"Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+"Plug 'plasticboy/vim-markdown'
+"Plug 'ferrine/md-img-paste.vim' 
+"Plug 'yinflying/matlab.vim'
 Plug 'lervag/vimtex'
 Plug 'SirVer/ultisnips'
 Plug 'Wospx-Qz/vim-snippets'
@@ -19,11 +19,11 @@ Plug 'Wospx-Qz/vim-snippets'
 "Plug 'nvim-lua/plenary.nvim'
 "Plug 'nvim-telescope/telescope.nvim'
 Plug 'easymotion/vim-easymotion'
-Plug 'neoclide/coc.nvim'
+Plug 'neoclide/coc.nvim',{'branch':'release'}
 "Plug 'jpalardy/vim-slime'
 "Plug 'sillybun/vim-repl'
 "Plug 'hkupty/iron.nvim'
-
+"Plug 'Neur1n/neuims'
 call plug#end()
 
 "{{{config
@@ -37,34 +37,36 @@ set showmatch
 set relativenumber
 set background=dark
 "保存折叠信息
-autocmd BufWinLeave *.m mkview
-autocmd BufWinLeave *.md mkview
-autocmd BufWinLeave *.txt mkview
-autocmd BufWinLeave *.tex mkview
-autocmd BufWinLeave *.vim mkview
+"autocmd BufWinLeave *.m mkview
+"autocmd BufWinLeave *.md mkview
+"autocmd BufWinLeave *.txt mkview
+"autocmd BufWinLeave *.tex mkview
+"autocmd BufWinLeave *.vim mkview
 "}}}
 
 "{{{ZFVimIM
 let g:ZFVimIM_openapi_enable=1
 let g:ZFVimIM_symbolMap = {
             \   '!' : ['！'],
-            \   '-' : [''],
+            \   '-' : ['-'],
             \   '_' : ['——'],
             \   '(' : ['（'],
             \   ')' : ['）'],
-            \   '[' : ['【'],
-            \   ']' : ['】'],
-            \   '<' : ['《'],
-            \   '>' : ['》'],
-            \   '/' : ['、'],
-            \   ';' : ['；'],
-            \   ':' : ['：'],
+            \   '[' : ['['],
+            \   ']' : [']'],
             \   ',' : ['，'],
             \   '.' : ['。'],
+            \   '<' : ['《'],
+            \   '>' : ['》'],
+            \   '/' : ['/'],
+            \   ';' : ['；'],
+            \   ':' : ['：'],
             \   '?' : ['？'],
             \   "'" : ['‘', '’'],
             \   '"' : ['“', '”'],
             \ }
+
+
 function! s:myLocalDb()
     let db = ZFVimIM_dbInit({
                 \   'name' : 'QZdb',
@@ -99,15 +101,15 @@ let g:NERDTreeShowBookmarks=1
 "}}}
 
 "{{{md-img-paste.vim
-autocmd FileType markdown nmap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<CR>
-let g:mdip_imgdir = 'img'
-let g:mdip_imgname = 'image'
+"autocmd FileType markdown nmap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<CR>
+"let g:mdip_imgdir = 'img'
+"let g:mdip_imgname = 'image'
 "}}}
 
 "{{{markdown-preview.nvim
-let g:mkdp_path_to_chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-let g:mkdp_auto_start = 0
-let g:mkdp_auto_close = 1
+"let g:mkdp_path_to_chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
+"let g:mkdp_auto_start = 0
+"let g:mkdp_auto_close = 1
 "}}}
 
 "{{{vimlatex
@@ -135,7 +137,8 @@ endfunction
 augroup vimtex_common
   autocmd!
   autocmd FileType tex call s:write_server_name()
-augroup END"let g:vimtex_compiler_latexmk_engines={'_':'-xelatex'}
+augroup END
+let g:vimtex_compiler_latexmk_engines={'_':'-xelatex'}
 "}}}
 
 "{{{snippets
@@ -160,14 +163,14 @@ let g:EasyMotion_do_mapping = 0 " Disable default mappings
 " or
 " `s{char}{char}{label}`
 " Need one more keystroke, but on average, it may be more comfortable.
-nmap <Leader>f <Plug>(easymotion-overwin-f)
+nnoremap <Leader>f <Plug>(easymotion-overwin-f)
 
 " Turn on case-insensitive feature
 let g:EasyMotion_smartcase = 2
 
 " JK motions: Line motions
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
+nnoremap <Leader>j <Plug>(easymotion-j)
+nnoremap <Leader>k <Plug>(easymotion-k)
 
 	
 
@@ -181,5 +184,11 @@ nnoremap <Leader>t :NERDTreeFind<cr>
 "
 
 " self Setting
-nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr><c-w><c-w>
-nnoremap <Leader><Leader> :b ipython <cr> a <c-v><cr><c-\><c-n>:bn<cr>
+nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr>a<c-\><c-n><c-w><c-w>
+nnoremap <Leader><Leader> :b ipython <cr>a<c-v><cr><c-\><c-n><c-^>
+nnoremap <leader>ev :vsplit $MYVIMRC<cr>
+nnoremap <leader>sv :source $MYVIMRC<cr>
+tnoremap jk <c-\><c-n><c-w><c-w>
+inoremap jk <ESC><c-w><c-w>a
+iabbrev CUEN China Unicom (Shanghai) Industrial Internet Co.,Ltd.
+
