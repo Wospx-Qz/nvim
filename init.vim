@@ -87,29 +87,16 @@ let g:startify_custom_header = ['Try your best']
 let g:startify_custom_footer = ['WospxJo']
 let g:startify_bookmarks = [
 			\{'m':'D:\Markdown'}, 
-			\{'t':'D:\1.Paper\0.Thesis'}, 
-			\{'c':'C:\Users\Wospx\AppData\Local\nvim\init.vim'},
-			\{'M':'D:\File\matlabscript'},
-			\{'V':'D:\vimfile'},
+			\{'b':'D:\MyBeamer'}, 
+			\{'p':'D:\PythonProject'}, 
+			\{'v':'D:\vimfile'},
 			\]
-let g:startify_files_number = 5
+let g:startify_files_number = 20
 "}}}
 
 "{{{Nerdtree
 let g:NERDTreeShowBookmarks=1
 
-"}}}
-
-"{{{md-img-paste.vim
-"autocmd FileType markdown nmap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<CR>
-"let g:mdip_imgdir = 'img'
-"let g:mdip_imgname = 'image'
-"}}}
-
-"{{{markdown-preview.nvim
-"let g:mkdp_path_to_chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe"
-"let g:mkdp_auto_start = 0
-"let g:mkdp_auto_close = 1
 "}}}
 
 "{{{vimlatex
@@ -178,7 +165,9 @@ nnoremap <Leader>k <Plug>(easymotion-k)
 "{{{mapping
 inoremap jj <ESC>
 nnoremap <ESC><ESC> :nohl<cr>
-nnoremap <F2> :Startify<cr> 
+"nnoremap <F2> :Startify<cr> 
+nnoremap <F2> :NERDTree<cr> 
+nnoremap <F3> :NERDTreeClose<cr> 
 nnoremap <Leader>t :NERDTreeFind<cr>
 "}}}
 "
@@ -188,7 +177,35 @@ nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr>a<c-\><c-n><c-w><c-w>
 nnoremap <Leader><Leader> :b ipython <cr>a<c-v><cr><c-\><c-n><c-^>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
-tnoremap jk <c-\><c-n><c-w><c-w>
-inoremap jk <ESC><c-w><c-w>a
+tnoremap jk <c-\><c-n><c-w><c-p>
+inoremap jk <ESC><c-w><c-p>a
 iabbrev CUEN China Unicom (Shanghai) Industrial Internet Co.,Ltd.
 
+onoremap # ?#%%<cr>y/#%%<cr>
+
+function! AlignTcbraster()
+python<<EOF
+from wospx.aligntool import alignfigurebox
+teststr  = vim.eval('@0')
+filepath= vim.eval("expand('%:p')")
+subedstr = alignfigurebox(filepath,teststr)
+vim.command("let @a = '%s'"%subedstr)
+vim.command('normal vip"ap')
+EOF
+endfunction
+
+nnoremap <leader><space> yip:call AlignTcbraster()<cr>
+
+function! MakeNewTexFile()
+python<<EOF
+from wospx.beamertool import beamerfile
+import os
+obj = beamerfile()
+FP = vim.eval("expand('%:p')")
+obj.filepath = os.path.dirname(FP)
+Preamble = obj.makePreamble()
+obj.getTemplate()
+vim.command("let @t = '%s'"%Preamble)
+vim.command('normal vip"tp')
+EOF
+endfunction
