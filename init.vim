@@ -2,28 +2,11 @@ call plug#begin('C:\Users\Wospx\AppData\Local\nvim\plugged')
 Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
-Plug 'ZSaberLv0/ZFVimIM'
-Plug 'ZSaberLv0/ZFVimJob'
-Plug 'ZSaberLv0/ZFVimIM_openapi'
-"Plug 'godlygeek/tabular' "必要插件，安装在vim-markdown前面
-"Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-"Plug 'plasticboy/vim-markdown'
-"Plug 'ferrine/md-img-paste.vim' 
-"Plug 'yinflying/matlab.vim'
 Plug 'lervag/vimtex'
 Plug 'SirVer/ultisnips'
 Plug 'Wospx-Qz/vim-snippets'
-"Plug 'BurntSushi/ripgrep'
-"Plug 'sharkdp/fd'
-"Plug 'nvim-treesitter/nvim-treesitter'
-"Plug 'nvim-lua/plenary.nvim'
-"Plug 'nvim-telescope/telescope.nvim'
-Plug 'easymotion/vim-easymotion'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
-"Plug 'jpalardy/vim-slime'
-"Plug 'sillybun/vim-repl'
-"Plug 'hkupty/iron.nvim'
-"Plug 'Neur1n/neuims'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 call plug#end()
 
 "{{{config
@@ -36,50 +19,8 @@ set number
 set showmatch
 set relativenumber
 set background=dark
-"保存折叠信息
-"autocmd BufWinLeave *.m mkview
-"autocmd BufWinLeave *.md mkview
-"autocmd BufWinLeave *.txt mkview
-"autocmd BufWinLeave *.tex mkview
-"autocmd BufWinLeave *.vim mkview
-"}}}
-
-"{{{ZFVimIM
-let g:ZFVimIM_openapi_enable=1
-let g:ZFVimIM_symbolMap = {
-            \   '!' : ['！'],
-            \   '-' : ['-'],
-            \   '_' : ['——'],
-            \   '(' : ['（'],
-            \   ')' : ['）'],
-            \   '[' : ['['],
-            \   ']' : [']'],
-            \   ',' : ['，'],
-            \   '.' : ['。'],
-            \   '<' : ['《'],
-            \   '>' : ['》'],
-            \   '/' : ['/'],
-            \   ';' : ['；'],
-            \   ':' : ['：'],
-            \   '?' : ['？'],
-            \   "'" : ['‘', '’'],
-            \   '"' : ['“', '”'],
-            \ }
-
-
-function! s:myLocalDb()
-    let db = ZFVimIM_dbInit({
-                \   'name' : 'QZdb',
-                \ })
-    call ZFVimIM_cloudRegister({
-                \   'mode' : 'local',
-                \   'dbId' : db['dbId'],
-                \   'repoPath' : 'C:\Users\Wospx\AppData\Local\nvim\db',
-                \   'dbFile' : '/pinyin_huge.txt', 
-                \   'dbCountFile' : '/pinyin_huge_count.txt', 
-                \ })
-endfunction
-autocmd User ZFVimIM_event_OnDbInit call s:myLocalDb()
+set guifont=Consolas:h14:b
+set autochdir
 "}}}
 
 "{{{Startify
@@ -96,7 +37,7 @@ let g:startify_files_number = 20
 
 "{{{Nerdtree
 let g:NERDTreeShowBookmarks=1
-
+let g:NERDTreeSortOrder = ['[[-timestamp]]']
 "}}}
 
 "{{{vimlatex
@@ -141,31 +82,12 @@ nnoremap <F7> :w<cr>:term python<cr>
 "noremap ,l :sp<CR><C-w>j:term ipython<CR> i %run 
 "}}}
 
-"easymotion
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
-
-" Jump to anywhere you want with minimal keystrokes, with just one key binding.
-" `s{char}{label}`
-"nmap s <Plug>(easymotion-overwin-f)
-" or
-" `s{char}{char}{label}`
-" Need one more keystroke, but on average, it may be more comfortable.
-nnoremap <Leader>f <Plug>(easymotion-overwin-f)
-
-" Turn on case-insensitive feature
-let g:EasyMotion_smartcase = 2
-
-" JK motions: Line motions
-nnoremap <Leader>j <Plug>(easymotion-j)
-nnoremap <Leader>k <Plug>(easymotion-k)
-
-	
-
-
 "{{{mapping
 inoremap jj <ESC>
+inoremap JJ <ESC>
+inoremap Jj <ESC>
+inoremap jJ <ESC>
 nnoremap <ESC><ESC> :nohl<cr>
-"nnoremap <F2> :Startify<cr> 
 nnoremap <F2> :NERDTree<cr> 
 nnoremap <F3> :NERDTreeClose<cr> 
 nnoremap <Leader>t :NERDTreeFind<cr>
@@ -180,6 +102,8 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 tnoremap jk <c-\><c-n><c-w><c-p>
 inoremap jk <ESC><c-w><c-p>a
 iabbrev CUEN China Unicom (Shanghai) Industrial Internet Co.,Ltd.
+inoremap 【 [
+inoremap 】 ]
 
 onoremap # ?#%%<cr>y/#%%<cr>
 
@@ -209,3 +133,19 @@ vim.command("let @t = '%s'"%Preamble)
 vim.command('normal vip"tp')
 EOF
 endfunction
+
+function! TransMd2Docx()
+python<<EOF
+from wospx.pandoctool import md2docx
+FP = vim.eval("expand('%:p')")
+md2docx(FP)
+EOF
+echo 'ok'
+endfunction
+
+autocmd InsertEnter * :silent :!D:\\Software\\im-select\\im-select.exe 2052
+autocmd InsertLeave * :silent :!D:\\Software\\im-select\\im-select.exe 1033
+
+nmap <C-s> <Plug>MarkdownPreview
+nmap <M-s> <Plug>MarkdownPreviewStop
+let g:mkdp_auto_close = 0
