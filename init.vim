@@ -1,4 +1,4 @@
-call plug#begin('C:\Users\Wospx\AppData\Local\nvim\plugged')
+call plug#begin('C:\Users\qiaoz12\AppData\Local\nvim\plugged')
 Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
@@ -7,10 +7,14 @@ Plug 'SirVer/ultisnips'
 Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+Plug 'img-paste-devs/img-paste.vim'
+Plug 'morhetz/gruvbox'
+Plug 'moll/vim-bbye' " close buffer and keep status
+Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " color-style
 call plug#end()
 
 "{{{config
-:colorscheme gruvbox "one molokai
+:colorscheme catppuccin-latte "gruvbox one molokai
 set clipboard^=unnamed,unnamedplus
 set tabstop=4 
 set shiftwidth=4
@@ -18,10 +22,10 @@ set autoindent
 set number
 set showmatch
 set relativenumber
-set background=dark
+set background=light
 set guifont=Consolas:h14:b
 set autochdir
-set mouse=vn
+set mouse=nhv
 "}}}
 
 "{{{Startify
@@ -41,112 +45,127 @@ let g:NERDTreeShowBookmarks=1
 let g:NERDTreeSortOrder = ['[[-timestamp]]']
 "}}}
 
-"{{{vimlatex
-let g:tex_flavor = 'latex'
-let g:Tex_ViewRule_pdf = 'D:\Users\Wospx\AppData\Local\SumatraPDF\SumatraPDF.exe -reuse-instance -inverse-search "gvim -c \":RemoteOpen +\%l \%f\""'
-let g:vimtex_compiler_latexmk_engines = {
-    \ '_'                : '-pdf',
-    \ 'pdflatex'         : '-pdf',
-    \ 'dvipdfex'         : '-pdfdvi',
-    \ 'lualatex'         : '-lualatex',
-    \ 'xelatex'          : '-xelatex',
-    \ 'context (pdftex)' : '-pdf -pdflatex=texexec',
-    \ 'context (luatex)' : '-pdf -pdflatex=context',
-    \ 'context (xetex)'  : '-pdf -pdflatex=''texexec --xtx''',
-    \}
-let g:vimtex_view_general_viewer = 'D:\Users\Wospx\AppData\Local\SumatraPDF\SumatraPDF.exe' 
-let g:vimtex_view_general_options
-     \ = ' -reuse-instance -forward-search @tex @line @pdf'
-let g:vimtex_fold_enabled = 1
-function! s:write_server_name() abort
-  let nvim_server_file = (has('win32') ? $TEMP : '/tmp') . '/vimtexserver.txt'
-  call writefile([v:servername], nvim_server_file)
-endfunction
-
-augroup vimtex_common
-  autocmd!
-  autocmd FileType tex call s:write_server_name()
-augroup END
-let g:vimtex_compiler_latexmk_engines={'_':'-xelatex'}
-"}}}
-
 "{{{snippets
 let g:UltiSnipsExpandTrigger = '<tab>'
 let g:UltiSnipsJumpForwardTrigger = '<tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 "}}}
 
-"{{{python
-"map <F5> :w<cr>:!python %<cr>
-nnoremap <F5> :w<cr>:sp<cr><c-w><c-w>:term python %<cr>
-nnoremap <F7> :w<cr>:term python<cr>
-"noremap ,l :sp<CR><C-w>j:term ipython<CR> i %run 
-"}}}
-
-"{{{mapping
-inoremap jj <ESC>
-inoremap JJ <ESC>
-inoremap Jj <ESC>
-inoremap jJ <ESC>
 nnoremap <ESC><ESC> :nohl<cr>
 nnoremap <F2> :NERDTree<cr> 
-nnoremap <F3> :NERDTreeClose<cr> 
+nnoremap <F3> :NERDTreeClose<cr>
+nnoremap K o<ESC>
 nnoremap <Leader>t :NERDTreeFind<cr>
-"}}}
-"
-
-" self Setting
+nnoremap <Leader>j :s/\v[,.] \|[，。；：]/\0\r/g<cr>:nohl<cr>{j
+nnoremap <leader>k vip:s/\n//g<cr>:nohl<cr>0
 nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr>a<c-\><c-n><c-w><c-w>
-nnoremap <Leader><Leader> :b ipython <cr>a<c-v><cr><c-\><c-n><c-^>
+nnoremap <Leader><Leader> :b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
+
 tnoremap jk <c-\><c-n><c-w><c-p>
+
 inoremap jk <ESC><c-w><c-p>a
-iabbrev CUEN China Unicom (Shanghai) Industrial Internet Co.,Ltd.
 inoremap 【 [
 inoremap 】 ]
+inoremap  ｝ }
+inoremap ｛ {
+inoremap ￥ $
+inoremap · `
+inoremap …… ^
+inoremap —— _
 
-onoremap # ?#%%<cr>y/#%%<cr>
+onoremap % ?#%%<cr>y/#%%<cr>
+onoremap # ?#<cr>j0v/#<cr>k
+onoremap : ?:<cr>j0y/In [<cr>
 
-function! AlignTcbraster()
+" ipython run whole script
+function! Ipyrun()
 python<<EOF
-from wospx.aligntool import alignfigurebox
+filename = vim.eval("expand('%:t:r')")
+runcom = '%run ' + filename
+vim.command("let @+ = '%s'"%runcom)
+EOF
+endfunction
+
+" input author information by abbr
+function! HelpAbbrToInfo()
+python<<EOF
+from wospx.quickinfoinput import Abbr2Info
 teststr  = vim.eval('@0')
-filepath= vim.eval("expand('%:p')")
-subedstr = alignfigurebox(filepath,teststr)
+ccc = Abbr2Info(teststr)
+subedstr = ccc.get_info()
 vim.command("let @a = '%s'"%subedstr)
-vim.command('normal vip"ap')
+vim.command('normal viw"ap')
 EOF
 endfunction
+nnoremap <c-\> yiw:call HelpAbbrToInfo()<cr>
 
-nnoremap <leader><space> yip:call AlignTcbraster()<cr>
-
-function! MakeNewTexFile()
+" Translate Markdown to Docx file by Pandoc
+function! TransMD2(filetype)
+let FT = a:filetype
 python<<EOF
-from wospx.beamertool import beamerfile
-import os
-obj = beamerfile()
+from wospx.newpandoctool import PandocMD
+ft = vim.eval('FT')
 FP = vim.eval("expand('%:p')")
-obj.filepath = os.path.dirname(FP)
-Preamble = obj.makePreamble()
-obj.getTemplate()
-vim.command("let @t = '%s'"%Preamble)
-vim.command('normal vip"tp')
+obj = PandocMD(FP)
+if ft == '0':
+	obj.md2docx()
+if ft == '1':
+	obj.md2paper()
 EOF
+echo 'Completed'
 endfunction
 
-function! TransMd2Docx()
-python<<EOF
-from wospx.pandoctool import md2docx
-FP = vim.eval("expand('%:p')")
-md2docx(FP)
-EOF
-echo 'ok'
-endfunction
-
-autocmd InsertEnter * :silent :!D:\\Software\\im-select\\im-select.exe 2052
-autocmd InsertLeave * :silent :!D:\\Software\\im-select\\im-select.exe 1033
-
+" markdowm preview
 nmap <C-s> <Plug>MarkdownPreview
 nmap <M-s> <Plug>MarkdownPreviewStop
 let g:mkdp_auto_close = 0
+let g:mkdp_markdown_css = "D:/MyTemplates/CSS/sspai.css"
+
+highlight myCiteColor ctermbg=blue guifg=#bbbbbb
+autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
+
+" 设置默认图片路径 img
+let g:mdip_imgdir = 'img' 
+"设置默认图片名称。当图片名称没有给出时，使用默认图片名称 image
+let g:mdip_imgname = 'image'
+autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<cr><ESC>
+
+let g:chinese_flag = 0
+function! ChaLangENCN(lflag)
+let language_flag = a:lflag
+python<<EOF
+LF = vim.eval('language_flag')
+CF = vim.eval('g:chinese_flag')
+import win32api
+import win32gui
+from win32con import WM_INPUTLANGCHANGEREQUEST
+from win32con import KEYEVENTF_KEYUP
+hwnd = win32gui.GetForegroundWindow()
+# 0 = EN, 1 = CN
+LANGUAGE = {
+        "1": 0x0804, 
+        "0": 0x0409  
+    }
+
+result = win32api.SendMessage(
+        hwnd,
+        WM_INPUTLANGCHANGEREQUEST,
+        0,
+        LANGUAGE[LF]
+    )
+if CF == '1' and LF == '1':
+	win32api.keybd_event(16,0,KEYEVENTF_KEYUP,0)
+	win32api.keybd_event(17,0,0,0)
+	win32api.keybd_event(17,0,KEYEVENTF_KEYUP,0)
+EOF
+endfunction
+
+autocmd! VimEnter * call ChaLangENCN(0)
+autocmd! InsertEnter * call ChaLangENCN(1)
+autocmd! InsertLeave * call ChaLangENCN(0)
+
+
