@@ -21,6 +21,7 @@ set relativenumber
 set background=dark
 set guifont=Consolas:h14:b
 set autochdir
+set mouse=vn
 "}}}
 
 "{{{Startify
