@@ -81,6 +81,27 @@ onoremap % ?#%%<cr>y/#%%<cr>
 onoremap # ?#<cr>j0v/#<cr>k
 onoremap : ?:<cr>j0y/In [<cr>
 
+inoremap 。 <c-\><c-o>:call ChangeComment()<cr>
+inoremap 、 <c-\><c-o>:call ChangeDunhao()<cr>
+
+function! ChangeComment()
+let l:last_char = getline('.')[col('.')-2]
+if l:last_char =~ '\w\|\s\|\.'
+	call feedkeys('.','n')
+else
+	call feedkeys('。','n')
+endif
+endfunction
+
+function! ChangeDunhao()
+let l:last_char = getline('.')[col('.')-2]
+if l:last_char =~ '\w\|\s\|\.\|\$\|\\'
+	call feedkeys('\','n')
+else
+	call feedkeys('、','n')
+endif
+endfunction
+
 " ipython run whole script
 function! Ipyrun()
 python<<EOF
@@ -101,7 +122,7 @@ vim.command("let @a = '%s'"%subedstr)
 vim.command('normal viw"ap')
 EOF
 endfunction
-nnoremap <c-\> yiw:call HelpAbbrToInfo()<cr>
+nnoremap <c-/> yiw:call HelpAbbrToInfo()<cr>
 
 " Translate Markdown to Docx file by Pandoc
 function! TransMD2(filetype)
