@@ -28,14 +28,25 @@ set autochdir
 set mouse=nhv
 "}}}
 
+ let g:clipboard = {
+          \   'name': 'win32yank-wsl',
+          \   'copy': {
+          \      '+': 'test.exe -i --crlf',
+          \      '*': 'test.exe -i --crlf',
+          \    },
+          \   'paste': {
+          \      '+': 'test.exe -o --lf',
+          \      '*': 'test.exe -o --lf',
+          \   },
+          \   'cache_enabled': 0,
+          \ }
+
 "{{{Startify
 let g:startify_custom_header = ['Try your best']
 let g:startify_custom_footer = ['WospxJo']
 let g:startify_bookmarks = [
 			\{'m':'D:\Markdown'}, 
-			\{'b':'D:\MyBeamer'}, 
 			\{'p':'D:\PythonProject'}, 
-			\{'v':'D:\vimfile'},
 			\]
 let g:startify_files_number = 20
 "}}}
@@ -76,17 +87,17 @@ inoremap ￥ $
 inoremap · `
 inoremap …… ^
 inoremap —— _
-
-onoremap % ?#%%<cr>y/#%%<cr>
-onoremap # ?#<cr>j0v/#<cr>k
-onoremap : ?:<cr>j0y/In [<cr>
-
 inoremap 。 <c-\><c-o>:call ChangeComment()<cr>
 inoremap 、 <c-\><c-o>:call ChangeDunhao()<cr>
 
+onoremap $ ?#%%<cr>y/#%%<cr><c-o>
+onoremap # ?#<cr>j0v/#<cr>k
+onoremap : ?:<cr>j0y/In [<cr>
+
+
 function! ChangeComment()
 let l:last_char = getline('.')[col('.')-2]
-if l:last_char =~ '\w\|\s\|\.'
+if l:last_char =~ '\w\|\.' || len(l:last_char)==0
 	call feedkeys('.','n')
 else
 	call feedkeys('。','n')
@@ -95,7 +106,7 @@ endfunction
 
 function! ChangeDunhao()
 let l:last_char = getline('.')[col('.')-2]
-if l:last_char =~ '\w\|\s\|\.\|\$\|\\'
+if l:last_char =~ '\w\|\s\|\.\|\$\|\\' || len(l:last_char)==0
 	call feedkeys('\','n')
 else
 	call feedkeys('、','n')
@@ -143,8 +154,22 @@ endfunction
 " markdowm preview
 nmap <C-s> <Plug>MarkdownPreview
 nmap <M-s> <Plug>MarkdownPreviewStop
+let g:mkdp_preview_options = {
+    \ 'mkit': {},
+    \ 'katex': {},
+    \ 'uml': {},
+    \ 'maid': {},
+    \ 'disable_sync_scroll': 0,
+    \ 'sync_scroll_type': 'middle',
+    \ 'hide_yaml_meta': 1,
+    \ 'sequence_diagrams': {},
+    \ 'flowchart_diagrams': {},
+    \ 'content_editable': v:false,
+    \ 'disable_filename': 0,
+    \ 'toc': {}
+    \ }
 let g:mkdp_auto_close = 0
-let g:mkdp_markdown_css = "D:/MyTemplates/CSS/sspai.css"
+let g:mkdp_markdown_css = "D:/MyTemplates/CSS/mymarkdown.css"
 
 highlight myCiteColor ctermbg=blue guifg=#bbbbbb
 autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
@@ -171,7 +196,6 @@ LANGUAGE = {
         "1": 0x0804, 
         "0": 0x0409  
     }
-
 result = win32api.SendMessage(
         hwnd,
         WM_INPUTLANGCHANGEREQUEST,
@@ -189,4 +213,10 @@ autocmd! VimEnter * call ChaLangENCN(0)
 autocmd! InsertEnter * call ChaLangENCN(1)
 autocmd! InsertLeave * call ChaLangENCN(0)
 
+highlight Folded guibg=#eff1f5 guifg=#006699
+highlight FoldColumn guibg=#eff1f5 guifg=#c5d0e1
+"highlight Folded ctermbg = NONE
+"highlight FoldColumn ctermbg = NONE
+let g:markdown_folding = 0
+let g:markdown_enable_folding = 1
 
