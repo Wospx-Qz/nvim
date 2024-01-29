@@ -2,7 +2,7 @@ call plug#begin('C:\Users\qiaoz12\AppData\Local\nvim\plugged')
 Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
-Plug 'lervag/vimtex'
+"Plug 'lervag/vimtex'
 Plug 'SirVer/ultisnips'
 Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
@@ -11,9 +11,10 @@ Plug 'img-paste-devs/img-paste.vim'
 Plug 'morhetz/gruvbox'
 Plug 'moll/vim-bbye' " close buffer and keep status
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " color-style
+Plug 'Wospx-Qz/wosvim'
 call plug#end()
 
-"{{{config
+"{{{ general config
 :colorscheme catppuccin-latte "gruvbox one molokai
 set clipboard^=unnamed,unnamedplus
 set tabstop=4 
@@ -26,9 +27,15 @@ set background=light
 set guifont=Consolas:h14:b
 set autochdir
 set mouse=nhv
+set nrformats+=alpha
 "}}}
 
- let g:clipboard = {
+let g:python_host_skip_check=1
+let g:python_host_prog = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
+let g:python3_host_skip_check=1
+let g:python3_host_prog = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
+
+let g:clipboard = {
           \   'name': 'win32yank-wsl',
           \   'copy': {
           \      '+': 'test.exe -i --crlf',
@@ -66,7 +73,6 @@ nnoremap <ESC><ESC> :nohl<cr>
 nnoremap <F2> :NERDTree<cr> 
 nnoremap <F3> :NERDTreeClose<cr>
 nnoremap K o<ESC>
-nnoremap <Leader>t :NERDTreeFind<cr>
 nnoremap <Leader>j :s/\v[,.] \|[，。；：]/\0\r/g<cr>:nohl<cr>{j
 nnoremap <leader>k vip:s/\n//g<cr>:nohl<cr>0
 nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr>a<c-\><c-n><c-w><c-w>
@@ -89,6 +95,7 @@ inoremap …… ^
 inoremap —— _
 inoremap 。 <c-\><c-o>:call ChangeComment()<cr>
 inoremap 、 <c-\><c-o>:call ChangeDunhao()<cr>
+inoremap ： <c-\><c-o>:call ChangeMaohao()<cr>
 
 onoremap $ ?#%%<cr>y/#%%<cr><c-o>
 onoremap # ?#<cr>j0v/#<cr>k
@@ -97,7 +104,7 @@ onoremap : ?:<cr>j0y/In [<cr>
 
 function! ChangeComment()
 let l:last_char = getline('.')[col('.')-2]
-if l:last_char =~ '\w\|\.' || len(l:last_char)==0
+if l:last_char =~ '\w\|\.\|(\|)' || len(l:last_char)==0
 	call feedkeys('.','n')
 else
 	call feedkeys('。','n')
@@ -110,6 +117,15 @@ if l:last_char =~ '\w\|\s\|\.\|\$\|\\' || len(l:last_char)==0
 	call feedkeys('\','n')
 else
 	call feedkeys('、','n')
+endif
+endfunction
+
+function! ChangeMaohao()
+let l:last_char = getline('.')[col('.')-2]
+if l:last_char =~ '\w\|\.\|(\|)\|:' || len(l:last_char)==0
+	call feedkeys(':','n')
+else
+	call feedkeys('：','n')
 endif
 endfunction
 
@@ -151,6 +167,16 @@ EOF
 echo 'Completed'
 endfunction
 
+function! PreViewDocx()
+python<<EOF
+from wospx.newpandoctool import PandocMD
+FP = vim.eval("expand('%:p')")
+obj = PandocMD(FP)
+obj.previewdocx()
+EOF
+echo 'opened'
+endfunction
+
 " markdowm preview
 nmap <C-s> <Plug>MarkdownPreview
 nmap <M-s> <Plug>MarkdownPreviewStop
@@ -181,6 +207,11 @@ let g:mdip_imgname = 'image'
 autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<cr><ESC>
 
 let g:chinese_flag = 0
+autocmd WinEnter,VimEnter *.py let g:chinese_flag = 1
+autocmd WinEnter,VimEnter *.json let g:chinese_flag = 1
+autocmd WinEnter,VimEnter *.md let g:chinese_flag = 0
+
+
 function! ChaLangENCN(lflag)
 let language_flag = a:lflag
 python<<EOF
@@ -220,3 +251,6 @@ highlight FoldColumn guibg=#eff1f5 guifg=#c5d0e1
 let g:markdown_folding = 0
 let g:markdown_enable_folding = 1
 
+nnoremap <leader>d :call PreViewDocx()<cr>
+nnoremap <leader>t :call TransMD2(0)<cr>
+nnoremap <leader>T :call TransMD2(1)<cr>
