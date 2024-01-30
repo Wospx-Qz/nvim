@@ -2,16 +2,13 @@ call plug#begin('C:\Users\qiaoz12\AppData\Local\nvim\plugged')
 Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdtree'
 Plug 'jistr/vim-nerdtree-tabs'
-"Plug 'lervag/vimtex'
 Plug 'SirVer/ultisnips'
 Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 Plug 'img-paste-devs/img-paste.vim'
-Plug 'morhetz/gruvbox'
 Plug 'moll/vim-bbye' " close buffer and keep status
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " color-style
-Plug 'Wospx-Qz/wosvim'
 call plug#end()
 
 "{{{ general config
@@ -30,9 +27,9 @@ set mouse=nhv
 set nrformats+=alpha
 "}}}
 
-let g:python_host_skip_check=1
-let g:python_host_prog = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
-let g:python3_host_skip_check=1
+let g:python_host_skip_check = 1 
+let g:python3_host_skip_check = 1
+let g:python_host_prog  = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
 let g:python3_host_prog = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
 
 let g:clipboard = {
@@ -49,8 +46,7 @@ let g:clipboard = {
           \ }
 
 "{{{Startify
-let g:startify_custom_header = ['Try your best']
-let g:startify_custom_footer = ['WospxJo']
+let g:startify_custom_header = ['Wospx']
 let g:startify_bookmarks = [
 			\{'m':'D:\Markdown'}, 
 			\{'p':'D:\PythonProject'}, 
@@ -79,7 +75,8 @@ nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr>a<c-\><c-n><c-w><c-w>
 nnoremap <Leader><Leader> :b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
-nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+"nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+nnoremap <leader><Enter> :call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
 
 tnoremap jk <c-\><c-n><c-w><c-p>
@@ -130,75 +127,85 @@ endif
 endfunction
 
 " ipython run whole script
+"function! Ipyrun()
+"python<<EOF
+"filename = vim.eval("expand('%:t:r')")
+"runcom = '%run ' + filename
+"vim.command("let @+ = '%s'"%runcom)
+"EOF
+"endfunction
+
+" ipython run whole script
 function! Ipyrun()
-python<<EOF
-filename = vim.eval("expand('%:t:r')")
-runcom = '%run ' + filename
-vim.command("let @+ = '%s'"%runcom)
-EOF
+let l:filename = '%run '..expand('%:t:r')
+let @+ = l:filename
 endfunction
 
 " input author information by abbr
-function! HelpAbbrToInfo()
-python<<EOF
-from wospx.quickinfoinput import Abbr2Info
-teststr  = vim.eval('@0')
-ccc = Abbr2Info(teststr)
-subedstr = ccc.get_info()
-vim.command("let @a = '%s'"%subedstr)
-vim.command('normal viw"ap')
-EOF
-endfunction
-nnoremap <c-/> yiw:call HelpAbbrToInfo()<cr>
+"function! HelpAbbrToInfo()
+"python<<EOF
+"from wospx.quickinfoinput import Abbr2Info
+"teststr  = vim.eval('@0')
+"ccc = Abbr2Info(teststr)
+"subedstr = ccc.get_info()
+"vim.command("let @a = '%s'"%subedstr)
+"vim.command('normal viw"ap')
+"EOF
+"endfunction
+"nnoremap <c-/> yiw:call HelpAbbrToInfo()<cr>
 
+function! Ab2In()
+call system('python -m wospx.quickinput '..@c)
+echo 'python -m wospx.quickinput '..@c
+endfunction
+nnoremap <c-/> "cyiw :call Ab2In()<cr>
 " Translate Markdown to Docx file by Pandoc
-function! TransMD2(filetype)
-let FT = a:filetype
-python<<EOF
-from wospx.newpandoctool import PandocMD
-ft = vim.eval('FT')
-FP = vim.eval("expand('%:p')")
-obj = PandocMD(FP)
-if ft == '0':
-	obj.md2docx()
-if ft == '1':
-	obj.md2paper()
-EOF
-echo 'Completed'
-endfunction
+"function! TransMD2(filetype)
+"let FT = a:filetype
+"python<<EOF
+"from wospx.newpandoctool import PandocMD
+"ft = vim.eval('FT')
+"FP = vim.eval("expand('%:p')")
+"obj = PandocMD(FP)
+"if ft == '0':
+"	obj.md2docx()
+"if ft == '1':
+"	obj.md2paper()
+"EOF
+"echo 'Completed'
+"endfunction
 
-function! PreViewDocx()
-python<<EOF
-from wospx.newpandoctool import PandocMD
-FP = vim.eval("expand('%:p')")
-obj = PandocMD(FP)
-obj.previewdocx()
-EOF
-echo 'opened'
-endfunction
+"function! TransMD2(filetype)
+"let FT = a:filetype
+"python<<EOF
+"from wospx.newpandoctool import PandocMD
+"ft = vim.eval('FT')
+"FP = vim.eval("expand('%:p')")
+"obj = PandocMD(FP)
+"if ft == '0':
+"	obj.md2docx()
+"if ft == '1':
+"	obj.md2paper()
+"EOF
+"echo 'Completed'
+"endfunction
+
+
+"function! PreViewDocx()
+"python<<EOF
+"from wospx.newpandoctool import PandocMD
+"FP = vim.eval("expand('%:p')")
+"obj = PandocMD(FP)
+"obj.previewdocx()
+"EOF
+"echo 'opened'
+"endfunction
 
 " markdowm preview
 nmap <C-s> <Plug>MarkdownPreview
 nmap <M-s> <Plug>MarkdownPreviewStop
-let g:mkdp_preview_options = {
-    \ 'mkit': {},
-    \ 'katex': {},
-    \ 'uml': {},
-    \ 'maid': {},
-    \ 'disable_sync_scroll': 0,
-    \ 'sync_scroll_type': 'middle',
-    \ 'hide_yaml_meta': 1,
-    \ 'sequence_diagrams': {},
-    \ 'flowchart_diagrams': {},
-    \ 'content_editable': v:false,
-    \ 'disable_filename': 0,
-    \ 'toc': {}
-    \ }
 let g:mkdp_auto_close = 0
-let g:mkdp_markdown_css = "D:/MyTemplates/CSS/mymarkdown.css"
 
-highlight myCiteColor ctermbg=blue guifg=#bbbbbb
-autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
 
 " 设置默认图片路径 img
 let g:mdip_imgdir = 'img' 
@@ -208,9 +215,28 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#Markdow
 
 let g:chinese_flag = 0
 autocmd WinEnter,VimEnter *.py let g:chinese_flag = 1
-autocmd WinEnter,VimEnter *.json let g:chinese_flag = 1
+autocmd WinEnter,VimEnter *.json let g:chinese_flag = 0
 autocmd WinEnter,VimEnter *.md let g:chinese_flag = 0
 
+autocmd! VimEnter * call ChaLangENCN(0)
+
+
+autocmd! InsertEnter * call ChaLangENCN(1)
+autocmd! InsertLeave * call ChaLangENCN(0)
+"
+
+
+"function! ChaLangENCN(lflag)
+"let language_flag = a:lflag
+"python<<EOF
+"LF = vim.eval('language_flag')
+"CF = vim.eval('g:chinese_flag')
+"from wospx.inputtool import iputtool
+"iputtool.change_language(LF)
+"if CF == '1' and LF == '1':
+"	iputtool.tap_CTRL()
+"EOF
+"endfunction
 
 function! ChaLangENCN(lflag)
 let language_flag = a:lflag
@@ -240,17 +266,26 @@ if CF == '1' and LF == '1':
 EOF
 endfunction
 
-autocmd! VimEnter * call ChaLangENCN(0)
-autocmd! InsertEnter * call ChaLangENCN(1)
-autocmd! InsertLeave * call ChaLangENCN(0)
 
+autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
+highlight myCiteColor ctermbg=blue guifg=#bbbbbb
 highlight Folded guibg=#eff1f5 guifg=#006699
 highlight FoldColumn guibg=#eff1f5 guifg=#c5d0e1
+"
 "highlight Folded ctermbg = NONE
 "highlight FoldColumn ctermbg = NONE
+"
+
 let g:markdown_folding = 0
 let g:markdown_enable_folding = 1
 
-nnoremap <leader>d :call PreViewDocx()<cr>
-nnoremap <leader>t :call TransMD2(0)<cr>
-nnoremap <leader>T :call TransMD2(1)<cr>
+"nnoremap <leader>d :call PreViewDocx()<cr>
+"nnoremap <leader>t :call TransMD2(0)<cr>
+"nnoremap <leader>T :call TransMD2(1)<cr>
+
+nnoremap <leader>d :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' -1')<cr>
+nnoremap <leader>t :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' 0')<cr>
+nnoremap <leader>T :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' 1')<cr>
+
+
+
