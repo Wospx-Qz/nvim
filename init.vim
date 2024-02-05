@@ -1,13 +1,13 @@
 call plug#begin('~\AppData\Local\nvim\plugged')
 Plug 'mhinz/vim-startify'
-Plug 'scrooloose/nerdtree'
-Plug 'jistr/vim-nerdtree-tabs'
+"Plug 'scrooloose/nerdtree'
+"Plug 'jistr/vim-nerdtree-tabs'
 Plug 'SirVer/ultisnips'
 Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
-Plug 'img-paste-devs/img-paste.vim'
-Plug 'moll/vim-bbye' " close buffer and keep status
+"Plug 'img-paste-devs/img-paste.vim'
+"Plug 'moll/vim-bbye' " close buffer and keep status
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " color-style
 call plug#end()
 
@@ -55,9 +55,16 @@ let g:startify_files_number = 20
 "}}}
 
 "{{{Nerdtree
-let g:NERDTreeShowBookmarks=1
-let g:NERDTreeSortOrder = ['[[-timestamp]]']
+"let g:NERDTreeShowBookmarks=1
+"let g:NERDTreeSortOrder = ['[[-timestamp]]']
 "}}}
+"
+
+" netrw
+let g:netrw_browse_split = 3
+"let g:netrw_winsize = 50
+let g:netrw_sort_by = 'time'
+let g:netrw_sort_direction = 'reverse'
 
 "{{{snippets
 let g:UltiSnipsExpandTrigger = '<tab>'
@@ -147,6 +154,10 @@ echo 'python -m wospx.quickinput '..@c
 endfunction
 nnoremap <c-/> "cyiw :call Ab2In()<cr>
 
+highlight myCiteColor ctermbg=blue guifg=#bbbbbb
+highlight Folded guibg=#eff1f5 guifg=#006699
+highlight FoldColumn guibg=#eff1f5 guifg=#c5d0e1
+autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
 
 " markdowm preview
 nmap <C-s> <Plug>MarkdownPreview
@@ -201,10 +212,6 @@ EOF
 endfunction
 
 
-autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
-highlight myCiteColor ctermbg=blue guifg=#bbbbbb
-highlight Folded guibg=#eff1f5 guifg=#006699
-highlight FoldColumn guibg=#eff1f5 guifg=#c5d0e1
 
 let g:markdown_folding = 0
 let g:markdown_enable_folding = 1
