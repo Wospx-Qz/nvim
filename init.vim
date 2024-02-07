@@ -3,7 +3,7 @@ Plug 'mhinz/vim-startify'
 "Plug 'scrooloose/nerdtree'
 "Plug 'jistr/vim-nerdtree-tabs'
 Plug 'SirVer/ultisnips'
-Plug 'Wospx-Qz/vim-snippets'
+"Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'img-paste-devs/img-paste.vim'
@@ -27,11 +27,11 @@ set mouse=nhv
 set nrformats+=alpha
 "}}}
 
+if expand("$USERNAME") == "qiaoz12"
 let g:python_host_skip_check = 1 
 let g:python3_host_skip_check = 1
 let g:python_host_prog  = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
 let g:python3_host_prog = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
-
 let g:clipboard = {
           \   'name': 'win32yank-wsl',
           \   'copy': {
@@ -44,6 +44,7 @@ let g:clipboard = {
           \   },
           \   'cache_enabled': 0,
           \ }
+endif
 
 "{{{Startify
 let g:startify_custom_header = ['Wospx']
@@ -61,7 +62,7 @@ let g:startify_files_number = 20
 "
 
 " netrw
-let g:netrw_browse_split = 3
+let g:netrw_browse_split = 4
 "let g:netrw_winsize = 50
 let g:netrw_sort_by = 'time'
 let g:netrw_sort_direction = 'reverse'
@@ -73,8 +74,8 @@ let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 "}}}
 
 nnoremap <ESC><ESC> :nohl<cr>
-nnoremap <F2> :NERDTree<cr> 
-nnoremap <F3> :NERDTreeClose<cr>
+nnoremap <F2> :Vex<cr> 
+nnoremap <F3> :call <sid>close_explorer_buffers()<cr>
 nnoremap K o<ESC>
 nnoremap <Leader>j :s/\v[,.] \|[，。；：、]/\0\r/g<cr>:nohl<cr>{j
 nnoremap <leader>k vip:s/\n//g<cr>:nohl<cr>0
@@ -153,6 +154,14 @@ call system('python -m wospx.quickinput '..@c)
 echo 'python -m wospx.quickinput '..@c
 endfunction
 nnoremap <c-/> "cyiw :call Ab2In()<cr>
+
+function! s:close_explorer_buffers()
+    for i in range(1, bufnr('$'))
+        if getbufvar(i, '&filetype') == "netrw"
+            silent exe 'bdelete! ' . i
+        endif
+    endfor
+endfunction
 
 highlight myCiteColor ctermbg=blue guifg=#bbbbbb
 highlight Folded guibg=#eff1f5 guifg=#006699
