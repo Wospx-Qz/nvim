@@ -3,7 +3,7 @@ Plug 'mhinz/vim-startify'
 "Plug 'scrooloose/nerdtree'
 "Plug 'jistr/vim-nerdtree-tabs'
 Plug 'SirVer/ultisnips'
-"Plug 'Wospx-Qz/vim-snippets'
+Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'img-paste-devs/img-paste.vim'
