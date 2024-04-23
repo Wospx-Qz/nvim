@@ -25,6 +25,7 @@ set guifont=Consolas:h14:b
 set autochdir
 set mouse=nhv
 set nrformats+=alpha
+set cursorline
 "}}}
 
 if expand("$USERNAME") == "qiaoz12"
@@ -73,6 +74,10 @@ let g:UltiSnipsJumpForwardTrigger = '<tab>'
 let g:UltiSnipsJumpBackwardTrigger = '<s-tab>'
 "}}}
 
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
 nnoremap <ESC><ESC> :nohl<cr>
 nnoremap <F2> :Vex<cr> 
 nnoremap <F3> :call <sid>close_explorer_buffers()<cr>
@@ -87,6 +92,7 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
+nnoremap <leader>f :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
 
 tnoremap jk <c-\><c-n><c-w><c-p>
 
@@ -102,10 +108,13 @@ inoremap —— _
 inoremap 。 <c-\><c-o>:call ChangeComment()<cr>
 inoremap 、 <c-\><c-o>:call ChangeDunhao()<cr>
 inoremap ： <c-\><c-o>:call ChangeMaohao()<cr>
+"inoremap （ <c-\><c-o>:call ChangeKuohaoL()<cr>
+"inoremap ） <c-\><c-o>:call ChangeKuohaoR()<cr>
 
 onoremap $ ?#%%<cr>y/#%%<cr><c-o>
 onoremap # ?#<cr>j0v/#<cr>k
 onoremap : ?:<cr>j0y/In [<cr>
+
 
 
 function! ChangeComment()
@@ -119,7 +128,7 @@ endfunction
 
 function! ChangeDunhao()
 let l:last_char = getline('.')[col('.')-2]
-if l:last_char =~ '\w\|\s\|\.\|\$\|\\' || len(l:last_char)==0
+if l:last_char =~ '\w\|{\|}\|\.\|\$\|\\' || len(l:last_char)==0
 	call feedkeys('\','n')
 else
 	call feedkeys('、','n')
@@ -135,12 +144,39 @@ else
 endif
 endfunction
 
+function! ChangeKuohaoL()
+let l:last_char = getline('.')[col('.')-2]
+if l:last_char =~ '\w\|\.\|(\|)\|:' || len(l:last_char)==0
+	call feedkeys('(','n')
+else
+	call feedkeys('（','n')
+endif
+endfunction
+
+function! ChangeKuohaoR()
+let l:last_char = getline('.')[col('.')-2]
+if l:last_char =~ '\w\|\.\|(\|)\|:' || len(l:last_char)==0
+	call feedkeys(')','n')
+else
+	call feedkeys('）','n')
+endif
+endfunction
+
 function! Openipython()
 try
 	exe "bd!ipython"
 	exe "term ipython"
 catch
 	exe "term ipython"
+endtry
+endfunction
+
+function! Openlua()
+try
+	exe "bd! :lua"
+	exe "term lua"
+catch
+	exe "term lua"
 endtry
 endfunction
 
@@ -164,9 +200,20 @@ function! s:close_explorer_buffers()
 endfunction
 
 highlight myCiteColor ctermbg=blue guifg=#bbbbbb
+highlight myMetaColor ctermbg=blue guibg=#ffefef guifg=#ff41ab
+highlight myEquationColor ctermbg=blue guibg=#f4f4f4 guifg=#40a02b
+highlight myBoldColor guifg=#6e45c5
+highlight mySupColor guifg=#fe640b
 highlight Folded guibg=#eff1f5 guifg=#006699
 highlight FoldColumn guibg=#eff1f5 guifg=#c5d0e1
-autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
+
+autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/ 
+"2match myMetaColor /\v\%.{-}\$/
+"3match myEquationColor /\v\$.{-}\$/
+autocmd BufWinEnter *.md call matchadd('myBoldColor','\v\*\*.{-}\*\*',10)
+autocmd BufWinEnter *.md call matchadd('myEquationColor','\v\$.{-}\$',11)
+autocmd BufWinEnter *.md call matchadd('mySupColor','\v\^.{-}\^',12)
+autocmd BufWinEnter *.md call matchadd('myMetaColor','\v\%.{-}\$',13)
 
 " markdowm preview
 nmap <C-s> <Plug>MarkdownPreview
@@ -183,6 +230,7 @@ autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#Markdow
 let g:chinese_flag = 0
 
 autocmd WinEnter,VimEnter *.py let g:chinese_flag = 1
+autocmd WinEnter,VimEnter *.lua let g:chinese_flag = 1
 autocmd WinEnter,VimEnter *.json let g:chinese_flag = 0
 autocmd WinEnter,VimEnter *.md let g:chinese_flag = 0
 
@@ -222,8 +270,8 @@ endfunction
 
 
 
-let g:markdown_folding = 0
-let g:markdown_enable_folding = 1
+"let g:markdown_folding = 1
+"let g:markdown_enable_folding = 1
 
 nnoremap <leader>d :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' -1')<cr>
 nnoremap <leader>t :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' 0')<cr>
@@ -236,3 +284,5 @@ inoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? "\<c-r>=coc#float
 inoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? "\<c-r>=coc#float#scroll(0)\<cr>" : "\<Left>"
 vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
 vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
+
+
