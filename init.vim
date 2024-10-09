@@ -114,6 +114,7 @@ inoremap ： <c-\><c-o>:call ChangeMaohao()<cr>
 onoremap $ ?#%%<cr>y/#%%<cr><c-o>
 onoremap # ?#<cr>j0v/#<cr>k
 onoremap : ?:<cr>j0y/In [<cr>
+onoremap ` ?```<cr>v/```<cr><c-o>
 
 
 
@@ -128,7 +129,8 @@ endfunction
 
 function! ChangeDunhao()
 let l:last_char = getline('.')[col('.')-2]
-if l:last_char =~ '\w\|{\|}\|\.\|\$\|\\' || len(l:last_char)==0
+"if l:last_char =~ '\w\|{\|}\|\.\|\$\|\\' || len(l:last_char)==0
+if l:last_char =~ '{\|}\|\.\|\$\|\\' || len(l:last_char)==0
 	call feedkeys('\','n')
 else
 	call feedkeys('、','n')
@@ -212,7 +214,7 @@ autocmd! BufWinEnter *.md match myCiteColor /\[@.\{-}\]/
 "3match myEquationColor /\v\$.{-}\$/
 autocmd BufWinEnter *.md call matchadd('myBoldColor','\v\*\*.{-}\*\*',10)
 autocmd BufWinEnter *.md call matchadd('myEquationColor','\v\$.{-}\$',11)
-autocmd BufWinEnter *.md call matchadd('mySupColor','\v\^.{-}\^',12)
+"autocmd BufWinEnter *.md call matchadd('mySupColor','\v\^.{-}\^',12)
 autocmd BufWinEnter *.md call matchadd('myMetaColor','\v\%.{-}\$',13)
 
 " markdowm preview
@@ -286,3 +288,9 @@ vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(
 vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 
 
+iabbrev dot ```dot<cr>```<esc>ko
+iabbr hwfont HarmonyOS Sans SC medium
+
+iabbr dotconfig	node [shape = box]<cr>node [fontname = "HarmonyOS Sans SC bold"]<cr>edge [fontname = "HarmonyOS Sans SC bold"]<cr>graph [fontname = "HarmonyOS Sans SC bold"]<cr>graph [style=dashed]
+
+iabbr -》 ->
