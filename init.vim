@@ -31,8 +31,8 @@ set cursorline
 if expand("$USERNAME") == "qiaoz12"
 let g:python_host_skip_check = 1 
 let g:python3_host_skip_check = 1
-let g:python_host_prog  = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
-let g:python3_host_prog = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
+"let g:python_host_prog  = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
+"let g:python3_host_prog = 'D:\Users\qiaoz12\AppData\Local\anaconda3\python.exe'
 let g:clipboard = {
           \   'name': 'win32yank-wsl',
           \   'copy': {
@@ -288,9 +288,9 @@ vnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(
 vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(0) : "\<C-b>"
 
 
-iabbrev dot ```dot<cr>```<esc>ko
+"iabbrev dot ```dot<cr>```<esc>ko
 iabbr hwfont HarmonyOS Sans SC medium
 
-iabbr dotconfig	node [shape = box]<cr>node [fontname = "HarmonyOS Sans SC bold"]<cr>edge [fontname = "HarmonyOS Sans SC bold"]<cr>graph [fontname = "HarmonyOS Sans SC bold"]<cr>graph [style=dashed]
+iabbr dotconfig	node [shape = box]<cr>node [fontname = "HarmonyOS Sans SC regular"]<cr>edge [fontname = "HarmonyOS Sans SC regular"]<cr>graph [fontname = "HarmonyOS Sans SC regular"]<cr>graph [style=dashed]
 
 iabbr -》 ->
