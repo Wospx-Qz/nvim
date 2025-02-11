@@ -5,7 +5,7 @@ Plug 'mhinz/vim-startify'
 Plug 'SirVer/ultisnips'
 Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
+"Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'img-paste-devs/img-paste.vim'
 "Plug 'moll/vim-bbye' " close buffer and keep status
 Plug 'catppuccin/nvim', { 'as': 'catppuccin' } " color-style
@@ -65,8 +65,9 @@ let g:startify_files_number = 20
 " netrw
 let g:netrw_browse_split = 4
 "let g:netrw_winsize = 50
-let g:netrw_sort_by = 'time'
-let g:netrw_sort_direction = 'reverse'
+let g:netrw_sort_by = 'extent'
+let g:netrw_liststyle = 3
+"let g:netrw_sort_direction = 'reverse'
 
 "{{{snippets
 let g:UltiSnipsExpandTrigger = '<tab>'
@@ -79,7 +80,8 @@ nnoremap <c-k> <c-w>k
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 nnoremap <ESC><ESC> :nohl<cr>
-nnoremap <F2> :Vex<cr> 
+"nnoremap <F2> :Vex<cr> 
+nnoremap <F2> :call Open_explorer_buffers()<cr>
 nnoremap <F3> :call <sid>close_explorer_buffers()<cr>
 nnoremap K o<ESC>
 nnoremap <Leader>j :s/\v[,.] \|[，。；：、]/\0\r/g<cr>:nohl<cr>{j
@@ -93,8 +95,14 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
 nnoremap <leader>f :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
+nnoremap H gT
+nnoremap L gt
+nnoremap M :bn<cr>
+"nnoremap <leader>s i<!-- slide --><esc>
 
-tnoremap jk <c-\><c-n><c-w><c-p>
+"tnoremap jk <c-\><c-n><c-w><c-p>
+tnoremap <esc> <c-\><c-n>
+tmap jk <esc><c-w><c-p>
 
 inoremap jk <ESC><c-w><c-p>a
 inoremap 【 [
@@ -110,6 +118,9 @@ inoremap 、 <c-\><c-o>:call ChangeDunhao()<cr>
 inoremap ： <c-\><c-o>:call ChangeMaohao()<cr>
 "inoremap （ <c-\><c-o>:call ChangeKuohaoL()<cr>
 "inoremap ） <c-\><c-o>:call ChangeKuohaoR()<cr>
+inoremap 《 <c-\><c-o>:call ChangeTKuohaoL()<cr>
+inoremap 》 <c-\><c-o>:call ChangeTKuohaoR()<cr>
+inoremap ！ <c-\><c-o>:call ChangeTanhao()<cr>
 
 onoremap $ ?#%%<cr>y/#%%<cr><c-o>
 onoremap # ?#<cr>j0v/#<cr>k
@@ -120,7 +131,7 @@ onoremap ` ?```<cr>v/```<cr><c-o>
 
 function! ChangeComment()
 let l:last_char = getline('.')[col('.')-2]
-if l:last_char =~ '\w\|\.\|(\|)' || len(l:last_char)==0
+if l:last_char =~ '\w\|\.\|(\|)\|#' || len(l:last_char)==0
 	call feedkeys('.','n')
 else
 	call feedkeys('。','n')
@@ -164,6 +175,37 @@ else
 endif
 endfunction
 
+function! ChangeTKuohaoL()
+let l:last_char = getline('.')[col('.')-2]
+"if l:last_char =~ '\w\|{\|}\|\.\|\$\|\\' || len(l:last_char)==0
+if l:last_char =~ '{\|}\|\.\|\$\|\\' || len(l:last_char)==0
+	call feedkeys('<','n')
+else
+	call feedkeys('《','n')
+endif
+endfunction
+
+function! ChangeTKuohaoR()
+let l:last_char = getline('.')[col('.')-2]
+"if l:last_char =~ '\w\|{\|}\|\.\|\$\|\\' || len(l:last_char)==0
+if l:last_char =~ '{\|}\|\.\|\$\|\\\|-' || len(l:last_char)==0
+	call feedkeys('>','n')
+else
+	call feedkeys('》','n')
+endif
+endfunction
+
+function! ChangeTanhao()
+let l:last_char = getline('.')[col('.')-2]
+"if l:last_char =~ '\w\|{\|}\|\.\|\$\|\\' || len(l:last_char)==0
+if l:last_char =~ '{\|}\|\.\|\$\|\\\|<' || len(l:last_char)==0
+	call feedkeys('!','n')
+else
+	call feedkeys('！','n')
+endif
+endfunction
+
+
 function! Openipython()
 try
 	exe "bd!ipython"
@@ -191,7 +233,8 @@ function! Ab2In()
 call system('python -m wospx.quickinput '..@c)
 echo 'python -m wospx.quickinput '..@c
 endfunction
-nnoremap <c-/> "cyiw :call Ab2In()<cr>
+"nnoremap <c-/> "cyiw :call Ab2In()<cr>
+
 
 function! s:close_explorer_buffers()
     for i in range(1, bufnr('$'))
@@ -199,6 +242,18 @@ function! s:close_explorer_buffers()
             silent exe 'bdelete! ' . i
         endif
     endfor
+endfunction
+
+function! Open_explorer_buffers()
+    for i in range(1, bufnr('$'))
+        if getbufvar(i, '&filetype') == "netrw"
+			silent exe 'bd ' .i
+			silent exe 'Vex'
+			return
+            "silent exe 'bdelete! ' . i
+        endif
+    endfor
+	silent exe 'Vex'
 endfunction
 
 highlight myCiteColor ctermbg=blue guifg=#bbbbbb
@@ -216,31 +271,51 @@ autocmd BufWinEnter *.md call matchadd('myBoldColor','\v\*\*.{-}\*\*',10)
 autocmd BufWinEnter *.md call matchadd('myEquationColor','\v\$.{-}\$',11)
 "autocmd BufWinEnter *.md call matchadd('mySupColor','\v\^.{-}\^',12)
 autocmd BufWinEnter *.md call matchadd('myMetaColor','\v\%.{-}\$',13)
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " markdowm preview
-nmap <C-s> <Plug>MarkdownPreview
-nmap <M-s> <Plug>MarkdownPreviewStop
-let g:mkdp_auto_close = 0
+"nmap <C-s> <Plug>MarkdownPreview
+"nmap <M-s> <Plug>MarkdownPreviewStop
+"let g:mkdp_auto_close = 0
+"let g:mkdp_markdown_css = 'D:\MyTemplates\CSS\sspai.css'
+"
+"markdown preview enhance
+nmap <C-s> :CocCommand markdown-preview-enhanced.openPreview<cr><cr><cr>
+
+nmap <M-s> :CocCommand markdown-preview-enhanced.openPreviewBackground<cr><cr>
 
 
 " default image path img
-let g:mdip_imgdir = 'img' 
+"let g:mdip_imgdir = 'img' 
 " default image name
-let g:mdip_imgname = 'image'
-autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<cr><ESC>
+"let g:mdip_imgname = 'image'
+"autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<cr><ESC>
 
 let g:chinese_flag = 0
 
 autocmd WinEnter,VimEnter *.py let g:chinese_flag = 1
+autocmd WinEnter,VimEnter *.vim let g:chinese_flag = 1
 autocmd WinEnter,VimEnter *.lua let g:chinese_flag = 1
 autocmd WinEnter,VimEnter *.json let g:chinese_flag = 0
 autocmd WinEnter,VimEnter *.md let g:chinese_flag = 0
+autocmd WinEnter,VimEnter *.css let g:chinese_flag = 1
+autocmd WinEnter,VimEnter *.less let g:chinese_flag = 1
 
 autocmd! VimEnter * call ChaLangENCN(0)
 
 autocmd! InsertEnter * call ChaLangENCN(1)
 autocmd! InsertLeave * call ChaLangENCN(0)
 "
+
+function! Step2signal()
+let dotstr = @k
+python<<EOF
+from wospx.signallingfigure import GraphObj
+ds = vim.eval('dotstr')
+obj = GraphObj(ds)
+obj.to_clipboard()
+EOF
+endfunction
 
 function! ChaLangENCN(lflag)
 let language_flag = a:lflag
@@ -289,8 +364,26 @@ vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(
 
 
 "iabbrev dot ```dot<cr>```<esc>ko
-iabbr hwfont HarmonyOS Sans SC medium
+iabbr <nowait> hwfont HarmonyOS Sans SC medium
 
 iabbr dotconfig	node [shape = box]<cr>node [fontname = "HarmonyOS Sans SC regular"]<cr>edge [fontname = "HarmonyOS Sans SC regular"]<cr>graph [fontname = "HarmonyOS Sans SC regular"]<cr>graph [style=dashed]
 
-iabbr -》 ->
+
+iabbr nmm if __name__ == "__main__":
+
+
+
+function! Presetation2Markdown()
+	try
+		exe ":% s/<!-- slide /<!-- SLIDE /g"
+	catch
+		exe ":% s/<!-- SLIDE /<!-- slide /g"
+	endtry
+endfunction
+nnoremap <leader>sld :call Presetation2Markdown()<cr>
+
+
+
+
+map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
+"
