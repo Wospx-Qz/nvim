@@ -84,15 +84,16 @@ nnoremap <ESC><ESC> :nohl<cr>
 nnoremap <F2> :call Open_explorer_buffers()<cr>
 nnoremap <F3> :call <sid>close_explorer_buffers()<cr>
 nnoremap K o<ESC>
-nnoremap <Leader>j :s/\v[,.] \|[，。；：、]/\0\r/g<cr>:nohl<cr>{j
+nnoremap <Leader>j :s/\v[,.] \|[,，。；：、]/\0\r/g<cr>:nohl<cr>{j
 nnoremap <leader>k vip:s/\n//g<cr>:nohl<cr>0
 "nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr>a<c-\><c-n><c-w><c-w>
 nnoremap <c-cr> :vs<cr><c-w><c-w>:call Openipython()<cr>a<c-\><c-n><c-w><c-w>
-nnoremap <Leader><Leader> :b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
-nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+"nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
 nnoremap <leader>f :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
 nnoremap H gT
@@ -101,6 +102,7 @@ nnoremap M :bn<cr>
 "nnoremap <leader>s i<!-- slide --><esc>
 
 "tnoremap jk <c-\><c-n><c-w><c-p>
+tnoremap RR %load_ext autoreload <cr>%autoreload 2 <cr>
 tnoremap <esc> <c-\><c-n>
 tmap jk <esc><c-w><c-p>
 
@@ -207,11 +209,14 @@ endfunction
 
 
 function! Openipython()
+let l:filename = expand('%:t:r')
 try
-	exe "bd!ipython"
+	exe "bd!ipython"..filename
 	exe "term ipython"
+	exe "file ipython"..filename
 catch
 	exe "term ipython"
+	exe "file ipython"..filename
 endtry
 endfunction
 
@@ -229,11 +234,17 @@ let l:filename = '%run '..expand('%:t:r')
 let @+ = l:filename
 endfunction
 
+function! Jumptoipython()
+let l:filename = expand('%:t:r')
+	exe "b ipython"..filename
+endfunction
+
 function! Ab2In()
 call system('python -m wospx.quickinput '..@c)
 echo 'python -m wospx.quickinput '..@c
 endfunction
 "nnoremap <c-/> "cyiw :call Ab2In()<cr>
+
 
 
 function! s:close_explorer_buffers()
