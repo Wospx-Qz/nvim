@@ -1,9 +1,10 @@
-call plug#begin('~\AppData\Local\nvim\plugged')
+
+call plug#begin()
 Plug 'mhinz/vim-startify'
 "Plug 'scrooloose/nerdtree'
 "Plug 'jistr/vim-nerdtree-tabs'
-Plug 'SirVer/ultisnips'
-Plug 'Wospx-Qz/vim-snippets'
+""Plug 'SirVer/ultisnips'
+"Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 "Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'img-paste-devs/img-paste.vim'
@@ -14,6 +15,7 @@ call plug#end()
 "{{{ general config
 :colorscheme catppuccin-latte "gruvbox one molokai
 set clipboard^=unnamed,unnamedplus
+"set clipboard=unnamedplus
 set tabstop=4 
 set shiftwidth=4
 set autoindent
@@ -47,12 +49,32 @@ let g:clipboard = {
           \ }
 endif
 
+if has('wsl')
+let g:clipboard = {
+                \   'name': 'WslClipboard',
+                \   'copy': {
+                \      '+': 'clip.exe',
+                \      '*': 'clip.exe',
+                \    },
+                \   'paste': {
+                \      '+': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+                \      '*': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+                \   },
+                \   'cache_enabled': 0,
+                \ }
+endif
+
+
+
+
 "{{{Startify
 let g:startify_custom_header = ['Wospx']
+if has('win32')
 let g:startify_bookmarks = [
 			\{'m':'D:\Markdown'}, 
 			\{'p':'D:\PythonProject'}, 
 			\]
+endif
 let g:startify_files_number = 20
 "}}}
 
@@ -87,25 +109,41 @@ nnoremap K o<ESC>
 nnoremap <Leader>j :s/\v[,.] \|[,，。；：、]/\0\r/g<cr>:nohl<cr>{j
 nnoremap <leader>k vip:s/\n//g<cr>:nohl<cr>0
 "nnoremap <c-cr> :vs<cr><c-w><c-w>:term ipython<cr>a<c-\><c-n><c-w><c-w>
-nnoremap <c-cr> :vs<cr><c-w><c-w>:call Openipython()<cr>a<c-\><c-n><c-w><c-w>
-nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+nnoremap <c-cr> :call Openipython()<cr>
+"nnoremap <c-cr> :vs<cr><c-w><c-w>:call Openipython()<cr>a<c-\><c-n><c-w><c-w>
+"nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-\><c-n>pA<cr><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+"nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-\><c-n>pA<cr><nl><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+"nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-\><c-n>pA<cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
-nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-\><c-n>:put 9<cr>A<cr><c-\><c-n><c-^>
 nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
 nnoremap <leader>f :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
 nnoremap H gT
 nnoremap L gt
 nnoremap M :bn<cr>
 "nnoremap <leader>s i<!-- slide --><esc>
+"
+"
+
+if has('win32')
+"nnoremap <c-cr> :vs<cr><c-w><c-w>:call Openipython()<cr>a<c-\><c-n><c-w><c-w>
+nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+endif
+
+
 
 "tnoremap jk <c-\><c-n><c-w><c-p>
 tnoremap RR %load_ext autoreload <cr>%autoreload 2 <cr>
 tnoremap <esc> <c-\><c-n>
 tmap jk <esc><c-w><c-p>
+tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
+"inoremap jk <c-\><c-o>:call Jumptoipython()<cr>a
 inoremap jk <ESC><c-w><c-p>a
 inoremap 【 [
 inoremap 】 ]
@@ -218,6 +256,8 @@ catch
 	exe "term ipython"
 	exe "file ipython"..filename
 endtry
+	exe "vs"
+	exe "b "..filename
 endfunction
 
 function! Openlua()
@@ -231,7 +271,7 @@ endfunction
 
 function! Ipyrun()
 let l:filename = '%run '..expand('%:t:r')
-let @+ = l:filename
+let @9 = l:filename
 endfunction
 
 function! Jumptoipython()
@@ -282,7 +322,7 @@ autocmd BufWinEnter *.md call matchadd('myBoldColor','\v\*\*.{-}\*\*',10)
 autocmd BufWinEnter *.md call matchadd('myEquationColor','\v\$.{-}\$',11)
 "autocmd BufWinEnter *.md call matchadd('mySupColor','\v\^.{-}\^',12)
 autocmd BufWinEnter *.md call matchadd('myMetaColor','\v\%.{-}\$',13)
-autocmd CursorHold * silent call CocActionAsync('highlight')
+"autocmd CursorHold * silent call CocActionAsync('highlight')
 
 " markdowm preview
 "nmap <C-s> <Plug>MarkdownPreview
@@ -302,6 +342,7 @@ nmap <M-s> :CocCommand markdown-preview-enhanced.openPreviewBackground<cr><cr>
 "let g:mdip_imgname = 'image'
 "autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<cr><ESC>
 
+if has('win32')
 let g:chinese_flag = 0
 
 autocmd WinEnter,VimEnter *.py let g:chinese_flag = 1
@@ -317,6 +358,7 @@ autocmd! VimEnter * call ChaLangENCN(0)
 autocmd! InsertEnter * call ChaLangENCN(1)
 autocmd! InsertLeave * call ChaLangENCN(0)
 "
+endif
 
 function! Step2signal()
 let dotstr = @k
@@ -398,3 +440,4 @@ nnoremap <leader>sld :call Presetation2Markdown()<cr>
 
 map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 "
+
