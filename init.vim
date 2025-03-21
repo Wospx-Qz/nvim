@@ -3,8 +3,8 @@ call plug#begin()
 Plug 'mhinz/vim-startify'
 "Plug 'scrooloose/nerdtree'
 "Plug 'jistr/vim-nerdtree-tabs'
-""Plug 'SirVer/ultisnips'
-"Plug 'Wospx-Qz/vim-snippets'
+Plug 'SirVer/ultisnips'
+Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 "Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'img-paste-devs/img-paste.vim'
@@ -126,6 +126,7 @@ nnoremap H gT
 nnoremap L gt
 nnoremap M :bn<cr>
 "nnoremap <leader>s i<!-- slide --><esc>
+nnoremap <leader>so :so Session.vim<cr>
 "
 "
 
@@ -441,3 +442,69 @@ nnoremap <leader>sld :call Presetation2Markdown()<cr>
 map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 "
 
+if has('wsl')
+
+function! GenerateLoadString()
+    " 调用之前的函数获取起始行和结束行
+    call GetCopiedTextRange()
+
+    " 获取起始行和结束行
+    let start_line = get(g:, 'copied_start_line', -1)
+    let end_line = get(g:, 'copied_end_line', -1)
+
+    " 检查是否成功获取了行号
+    if start_line == -1 || end_line == -1
+        echo "未找到复制的文本或行号无效"
+        return
+    endif
+
+    " 生成 'load 起始行-中止行' 字符串
+    let load_string = '%load -r ' . start_line . '-' . end_line . ' ' . expand('%:t:r')
+
+    " 输出结果
+"    echo load_string
+
+    " 如果需要将结果复制到寄存器中，可以使用以下代码
+    call setreg('"', load_string)
+"    echo "已复制到默认寄存器: " . load_string
+endfunction
+
+" 修改之前的 GetCopiedTextRange 函数，将结果存储到全局变量中
+function! GetCopiedTextRange()
+    let copied_text = getreg('"')
+    let copied_lines = split(copied_text, "\n")
+    let buffer_lines = getline(1, '$')
+
+    let start_line = -1
+    let end_line = -1
+
+    for i in range(len(buffer_lines) - len(copied_lines) + 1)
+        let match = 1
+        for j in range(len(copied_lines))
+            if buffer_lines[i + j] != copied_lines[j]
+                let match = 0
+                break
+            endif
+        endfor
+
+        if match
+            let start_line = i + 1
+            let end_line = i + len(copied_lines)
+            break
+        endif
+    endfor
+
+    if start_line != -1 && end_line != -1
+        " 将结果存储到全局变量中
+        let g:copied_start_line = start_line
+        let g:copied_end_line = end_line
+"    else
+"        echo "未找到复制的文本"
+    endif
+endfunction
+
+" 调用函数
+"
+nnoremap <leader><leader> :w<cr>:call GenerateLoadString()<cr> :call Jumptoipython()<cr>""pA<cr><cr><cr><c-\><c-n><c-^>
+
+endif
