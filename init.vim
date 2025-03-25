@@ -1,10 +1,11 @@
 
+
 call plug#begin()
 Plug 'mhinz/vim-startify'
 "Plug 'scrooloose/nerdtree'
 "Plug 'jistr/vim-nerdtree-tabs'
-Plug 'SirVer/ultisnips'
-Plug 'Wospx-Qz/vim-snippets'
+"Plug 'SirVer/ultisnips'
+"Plug 'Wospx-Qz/vim-snippets'
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 "Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'img-paste-devs/img-paste.vim'
@@ -49,21 +50,20 @@ let g:clipboard = {
           \ }
 endif
 
-if has('wsl')
-let g:clipboard = {
-                \   'name': 'WslClipboard',
-                \   'copy': {
-                \      '+': 'clip.exe',
-                \      '*': 'clip.exe',
-                \    },
-                \   'paste': {
-                \      '+': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
-                \      '*': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
-                \   },
-                \   'cache_enabled': 0,
-                \ }
-endif
-
+"if has('wsl')
+"let g:clipboard = {
+"                \   'name': 'WslClipboard',
+"                \   'copy': {
+"                \      '+': 'clip.exe',
+"                \      '*': 'clip.exe',
+"                \    },
+"                \   'paste': {
+"                \      '+': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+"                \      '*': 'powershell.exe -c [Console]::Out.Write($(Get-Clipboard -Raw).tostring().replace("`r", ""))',
+"                \   },
+"                \   'cache_enabled': 0,
+"                \ }
+"endif
 
 
 
@@ -112,14 +112,14 @@ nnoremap <leader>k vip:s/\n//g<cr>:nohl<cr>0
 nnoremap <c-cr> :call Openipython()<cr>
 "nnoremap <c-cr> :vs<cr><c-w><c-w>:call Openipython()<cr>a<c-\><c-n><c-w><c-w>
 "nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
-nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-\><c-n>pA<cr><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+"nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-\><c-n>pA<cr><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
 "nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-\><c-n>pA<cr><nl><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
 "nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-\><c-n>pA<cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
-nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-\><c-n>:put 9<cr>A<cr><c-\><c-n><c-^>
+"nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:call Jumptoipython()<cr>a<c-w><c-\><c-n>:put 9<cr>A<cr><c-\><c-n><c-^>
 nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
 nnoremap <leader>f :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
 nnoremap H gT
@@ -132,8 +132,8 @@ nnoremap <leader>so :so Session.vim<cr>
 
 if has('win32')
 "nnoremap <c-cr> :vs<cr><c-w><c-w>:call Openipython()<cr>a<c-\><c-n><c-w><c-w>
-nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
-nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
+"nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
+"nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 endif
 
 
@@ -145,7 +145,8 @@ tmap jk <esc><c-w><c-p>
 tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
 "inoremap jk <c-\><c-o>:call Jumptoipython()<cr>a
-inoremap jk <ESC><c-w><c-p>a
+inoremap jk <esc>:call Jumptoipython()<cr>a
+"inoremap jk <ESC><c-w><c-p>a
 inoremap 【 [
 inoremap 】 ]
 inoremap  ｝ }
@@ -277,7 +278,10 @@ endfunction
 
 function! Jumptoipython()
 let l:filename = expand('%:t:r')
-	exe "b ipython"..filename
+	"exe "b ipython"..filename
+	let target_win = bufwinnr('ipython'.filename)
+	exe target_win . 'wincmd w'
+
 endfunction
 
 function! Ab2In()
@@ -442,7 +446,6 @@ nnoremap <leader>sld :call Presetation2Markdown()<cr>
 map <leader>q :bp<bar>sp<bar>bn<bar>bd<CR>
 "
 
-if has('wsl')
 
 function! GenerateLoadString()
     " 调用之前的函数获取起始行和结束行
@@ -467,6 +470,7 @@ function! GenerateLoadString()
     " 如果需要将结果复制到寄存器中，可以使用以下代码
     call setreg('"', load_string)
 "    echo "已复制到默认寄存器: " . load_string
+	return load_string
 endfunction
 
 " 修改之前的 GetCopiedTextRange 函数，将结果存储到全局变量中
@@ -505,6 +509,33 @@ endfunction
 
 " 调用函数
 "
-nnoremap <leader><leader> :w<cr>:call GenerateLoadString()<cr> :call Jumptoipython()<cr>""pA<cr><cr><cr><c-\><c-n><c-^>
+"nnoremap <leader><leader> :w<cr>:call GenerateLoadString()<cr>:call Jumptoipython()<cr>""pA<cr><cr><cr><c-\><c-n><c-^>
 
-endif
+
+nnoremap <silent> <leader><leader> :call RunScriptIPython(GenerateLoadString())<cr>:call SendEnter(2)<cr>
+
+nnoremap <silent> <leader><Enter> :call RunScriptIPython(CommandRunPythonScript())<cr>
+"
+
+function! CommandRunPythonScript()
+    let l:run_str = '%run ' . expand('%:t:r') 
+	return l:run_str
+endfunction
+
+function! RunScriptIPython(mycommand)
+	let l:run_script = a:mycommand
+	let l:job_id = getbufvar("ipython".expand('%:t:r'), 'terminal_job_id')
+	call jobsend(l:job_id,l:run_script)
+	if has('win32')
+		sleep 100m
+	endif
+	call jobsend(l:job_id,"\r")
+endfunction
+
+function! SendEnter(n)
+	let l:job_id = getbufvar("ipython".expand('%:t:r'), 'terminal_job_id')
+	for i in range(a:n)
+		call jobsend(l:job_id,"\r")
+	endfor
+endfunction
+
