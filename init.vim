@@ -15,8 +15,9 @@ call plug#end()
 
 "{{{ general config
 :colorscheme catppuccin-latte "gruvbox one molokai
-set clipboard^=unnamed,unnamedplus
-"set clipboard=unnamedplus
+if has('win32')
+	set clipboard^=unnamed,unnamedplus
+endif
 set tabstop=4 
 set shiftwidth=4
 set autoindent
@@ -66,24 +67,23 @@ endif
 "endif
 
 
-
 "{{{Startify
 let g:startify_custom_header = ['Wospx']
 if has('win32')
-let g:startify_bookmarks = [
-			\{'m':'D:\Markdown'}, 
-			\{'p':'D:\PythonProject'}, 
-			\]
+	let g:startify_bookmarks = [
+				\{'m':'D:\Markdown'}, 
+				\{'p':'D:\PythonProject'}, 
+				\]
 endif
 let g:startify_files_number = 20
 "}}}
+
 
 "{{{Nerdtree
 "let g:NERDTreeShowBookmarks=1
 "let g:NERDTreeSortOrder = ['[[-timestamp]]']
 "}}}
 "
-
 " netrw
 let g:netrw_browse_split = 4
 "let g:netrw_winsize = 50
@@ -125,18 +125,7 @@ nnoremap <leader>f :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
 nnoremap H gT
 nnoremap L gt
 nnoremap M :bn<cr>
-"nnoremap <leader>s i<!-- slide --><esc>
 nnoremap <leader>so :so Session.vim<cr>
-"
-"
-
-if has('win32')
-"nnoremap <c-cr> :vs<cr><c-w><c-w>:call Openipython()<cr>a<c-\><c-n><c-w><c-w>
-"nnoremap <Leader><Leader> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^><ESC><c-w><c-p>a<c-\><c-n><c-w><c-p>
-"nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr> :call Jumptoipython() <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
-endif
-
-
 
 "tnoremap jk <c-\><c-n><c-w><c-p>
 tnoremap RR %load_ext autoreload <cr>%autoreload 2 <cr>
@@ -146,7 +135,6 @@ tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
 
 "inoremap jk <c-\><c-o>:call Jumptoipython()<cr>a
 inoremap jk <esc>:call Jumptoipython()<cr>a
-"inoremap jk <ESC><c-w><c-p>a
 inoremap 【 [
 inoremap 】 ]
 inoremap  ｝ }
@@ -168,8 +156,6 @@ onoremap $ ?#%%<cr>y/#%%<cr><c-o>
 onoremap # ?#<cr>j0v/#<cr>k
 onoremap : ?:<cr>j0y/In [<cr>
 onoremap ` ?```<cr>v/```<cr><c-o>
-
-
 
 function! ChangeComment()
 let l:last_char = getline('.')[col('.')-2]
@@ -247,7 +233,6 @@ else
 endif
 endfunction
 
-
 function! Openipython()
 let l:filename = expand('%:t:r')
 try
@@ -262,19 +247,10 @@ endtry
 	exe "b "..filename
 endfunction
 
-function! Openlua()
-try
-	exe "bd! :lua"
-	exe "term lua"
-catch
-	exe "term lua"
-endtry
-endfunction
-
-function! Ipyrun()
-let l:filename = '%run '..expand('%:t:r')
-let @9 = l:filename
-endfunction
+"function! Ipyrun()
+"let l:filename = '%run '..expand('%:t:r')
+"let @9 = l:filename
+"endfunction
 
 function! Jumptoipython()
 let l:filename = expand('%:t:r')
@@ -337,7 +313,6 @@ autocmd BufWinEnter *.md call matchadd('myMetaColor','\v\%.{-}\$',13)
 "
 "markdown preview enhance
 nmap <C-s> :CocCommand markdown-preview-enhanced.openPreview<cr><cr><cr>
-
 nmap <M-s> :CocCommand markdown-preview-enhanced.openPreviewBackground<cr><cr>
 
 
@@ -348,21 +323,20 @@ nmap <M-s> :CocCommand markdown-preview-enhanced.openPreviewBackground<cr><cr>
 "autocmd FileType markdown nnoremap <buffer><silent> <leader>p :call mdip#MarkdownClipboardImage()<cr><ESC>
 
 if has('win32')
-let g:chinese_flag = 0
+	let g:chinese_flag = 0
 
-autocmd WinEnter,VimEnter *.py let g:chinese_flag = 1
-autocmd WinEnter,VimEnter *.vim let g:chinese_flag = 1
-autocmd WinEnter,VimEnter *.lua let g:chinese_flag = 1
-autocmd WinEnter,VimEnter *.json let g:chinese_flag = 0
-autocmd WinEnter,VimEnter *.md let g:chinese_flag = 0
-autocmd WinEnter,VimEnter *.css let g:chinese_flag = 1
-autocmd WinEnter,VimEnter *.less let g:chinese_flag = 1
+	autocmd WinEnter,VimEnter *.py let g:chinese_flag = 1
+	autocmd WinEnter,VimEnter *.vim let g:chinese_flag = 1
+	autocmd WinEnter,VimEnter *.lua let g:chinese_flag = 1
+	autocmd WinEnter,VimEnter *.json let g:chinese_flag = 0
+	autocmd WinEnter,VimEnter *.md let g:chinese_flag = 0
+	autocmd WinEnter,VimEnter *.css let g:chinese_flag = 1
+	autocmd WinEnter,VimEnter *.less let g:chinese_flag = 1
 
-autocmd! VimEnter * call ChaLangENCN(0)
-
-autocmd! InsertEnter * call ChaLangENCN(1)
-autocmd! InsertLeave * call ChaLangENCN(0)
-"
+	autocmd! VimEnter * call ChaLangENCN(0)
+	autocmd! InsertEnter * call ChaLangENCN(1)
+	autocmd! InsertLeave * call ChaLangENCN(0)
+	"
 endif
 
 function! Step2signal()
@@ -408,9 +382,9 @@ endfunction
 "let g:markdown_folding = 1
 "let g:markdown_enable_folding = 1
 
-nnoremap <leader>d :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' -1')<cr>
-nnoremap <leader>t :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' 0')<cr>
-nnoremap <leader>T :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' 1')<cr>
+"nnoremap <leader>d :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' -1')<cr>
+"nnoremap <leader>t :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' 0')<cr>
+"nnoremap <leader>T :call system('python -m wospx.pandoctool ' .. expand('%:p') .. ' 1')<cr>
 
 
 nnoremap <silent><nowait><expr> <C-f> coc#float#has_scroll() ? coc#float#scroll(1) : "\<C-f>"
@@ -423,22 +397,19 @@ vnoremap <silent><nowait><expr> <C-b> coc#float#has_scroll() ? coc#float#scroll(
 
 "iabbrev dot ```dot<cr>```<esc>ko
 iabbr <nowait> hwfont HarmonyOS Sans SC medium
-
 iabbr dotconfig	node [shape = box]<cr>node [fontname = "HarmonyOS Sans SC regular"]<cr>edge [fontname = "HarmonyOS Sans SC regular"]<cr>graph [fontname = "HarmonyOS Sans SC regular"]<cr>graph [style=dashed]
-
-
 iabbr nmm if __name__ == "__main__":
 
 
 
-function! Presetation2Markdown()
-	try
-		exe ":% s/<!-- slide /<!-- SLIDE /g"
-	catch
-		exe ":% s/<!-- SLIDE /<!-- slide /g"
-	endtry
-endfunction
-nnoremap <leader>sld :call Presetation2Markdown()<cr>
+"function! Presetation2Markdown()
+"	try
+"		exe ":% s/<!-- slide /<!-- SLIDE /g"
+"	catch
+"		exe ":% s/<!-- SLIDE /<!-- slide /g"
+"	endtry
+"endfunction
+"nnoremap <leader>sld :call Presetation2Markdown()<cr>
 
 
 
@@ -538,4 +509,8 @@ function! SendEnter(n)
 		call jobsend(l:job_id,"\r")
 	endfor
 endfunction
+
+nnoremap <leader>t :call RunScriptIPython("%run -m wospx.pandoctool ".expand("%:t")." 0")<cr>
+nnoremap <leader>T :call RunScriptIPython("%run -m wospx.pandoctool ".expand("%:t")." 1")<cr>
+nnoremap <leader>d :call RunScriptIPython("%run -m wospx.pandoctool ".expand("%:t")." -1")<cr>
 
