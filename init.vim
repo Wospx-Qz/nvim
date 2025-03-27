@@ -1,11 +1,11 @@
-
-
 call plug#begin()
 Plug 'mhinz/vim-startify'
 "Plug 'scrooloose/nerdtree'
 "Plug 'jistr/vim-nerdtree-tabs'
 "Plug 'SirVer/ultisnips'
 "Plug 'Wospx-Qz/vim-snippets'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 Plug 'neoclide/coc.nvim',{'branch':'release'}
 "Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install' }
 "Plug 'img-paste-devs/img-paste.vim'
@@ -121,7 +121,7 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:b ipython <cr>a<c-w><c-v><cr><c-\><c-n><c-^>
 "nnoremap <leader><Enter> :call Ipyrun()<cr>:call Ipyrun()<cr>:call Jumptoipython()<cr>a<c-w><c-\><c-n>:put 9<cr>A<cr><c-\><c-n><c-^>
 nnoremap <c-space> :let g:chinese_flag = 1 - g:chinese_flag<cr>
-nnoremap <leader>f :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
+nnoremap <leader>F :silent exe '!start explorer.exe /select,'..expand('%:p')<cr>
 nnoremap H gT
 nnoremap L gt
 nnoremap M :bn<cr>
@@ -483,9 +483,9 @@ endfunction
 "nnoremap <leader><leader> :w<cr>:call GenerateLoadString()<cr>:call Jumptoipython()<cr>""pA<cr><cr><cr><c-\><c-n><c-^>
 
 
-nnoremap <silent> <leader><leader> :call RunScriptIPython(GenerateLoadString())<cr>:call SendEnter(2)<cr>
+nnoremap <silent> <leader><leader> :w<cr>:call RunScriptIPython(GenerateLoadString())<cr>:call SendEnter(2)<cr>
 
-nnoremap <silent> <leader><Enter> :call RunScriptIPython(CommandRunPythonScript())<cr>
+nnoremap <silent> <leader><Enter> :w<cr>:call RunScriptIPython(CommandRunPythonScript())<cr>
 "
 
 function! CommandRunPythonScript()
@@ -514,3 +514,12 @@ nnoremap <leader>t :call RunScriptIPython("%run -m wospx.pandoctool ".expand("%:
 nnoremap <leader>T :call RunScriptIPython("%run -m wospx.pandoctool ".expand("%:t")." 1")<cr>
 nnoremap <leader>d :call RunScriptIPython("%run -m wospx.pandoctool ".expand("%:t")." -1")<cr>
 
+
+
+if has('wsl')
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
+endif
